@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html  ng-app="mnyrsApp">
+
+<head>
+<script src="http://localhost:8080/mfore/mnyrs/index-script.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js"></script>
+<script type="text/javascript" src="paging_by_div.js"></script>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<!-- ------------------------------------CSS style Section-------------------------------------------- -->
+<!-- ------------------------------------------------------------------------------------------------- -->
+<style type="text/css">
+.pg-normal {
+	color: black;
+	font-weight: normal;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.pg-selected {
+	color: black;
+	font-weight: bold;
+	text-decoration: underline;
+	cursor: pointer;
+}
+</style>
+
+
+</head>
+
+
+<body ng-controller="MainCtrl as mainCtrl">
+	<div id="error" style="color: red"></div>
+	<h1 style="text-align: center">mNyrs Registration Page </h1>
+		<a href="/mfore/auth/logout"> <li style="text-align: right">Logout</li></a>
+	<form action="/mfore/registration/updatePerson/" method="get"
+		enctype="application/x-www-form-urlencoded">
+		<div id="form_elements">
+			<div id="1" name="person-contact-detail" class="registration-div">
+				<h3>Person Contact Detail</h3>
+				<table>
+					<tr>
+						<td>First Name*</td>
+						<td><input type="text" name="firstName" required
+							ng-model="mainCtrl.ang_person.first_name"></td>
+					</tr>
+					<tr>
+						<td>Last Name*</td>
+						<td><input type="text" name="lastName" required
+							ng-model="mainCtrl.ang_person.last_name"></td>
+					</tr>
+					<tr>
+						<td>Street Address*</td>
+						<td><input type="text" name="streetAddress" required
+							ng-model="mainCtrl.ang_per_con_det.street_address"></td>
+					</tr>
+					<tr>
+						<td>Postal Code*</td>
+						<td><input type="text" name="postalCode" required
+							ng-model="mainCtrl.ang_per_con_det.postal_code"></td>
+					</tr>
+					<tr>
+						<td>City*</td>
+						<td><input type="text" name="city" required
+							ng-model="mainCtrl.ang_per_con_det.city"></td>
+					</tr>
+					<tr>
+						<td>Country *</td>
+						<td><input type="text" name="country" required
+							ng-model="mainCtrl.ang_per_con_det.country"></td>
+					</tr>
+					<tr>
+						<td>Country *</td>
+						<td><select ng-model="mainCtrl.ang_per_con_det.country"
+							ng-options="country for country in mainCtrl.ang_countries"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>Phone*</td>
+						<td><input type="text" name="phone" required
+							ng-model="mainCtrl.ang_per_con_det.phone"></td>
+					</tr>
+					<tr>
+						<td>Social ID Type*</td>
+						<td><select name="socialIDtype" required>
+								<option value="1">Passport</option>
+								<option value="2">Driving License</option>
+								<option value="3">Kela</option>
+								<option value="4">Other</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>ID Number*</td>
+						<td><input type="text" name="idNumber" required
+							ng-model="mainCtrl.ang_person.identification_number" /></td>
+						<br />
+					</tr>
+
+				</table>
+			</div>
+			<div id="2" name="mnyrs-specific-detail" class="registration-div">
+				<h3>Health attribute</h3>
+				<table>
+					<tr>
+						<td>Gender</td>
+						<td><select name="gender" required>
+								<option value="male">Male</option>
+								<option value="female">Female</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>Height</td>
+						<td><input type="number" 
+								   name="height"
+								   maxlength="10"
+								   required
+								   ng-model="mainCtrl.ang_mnyrs_spc_det.height" 
+								   ng-min="50"
+								   ng-max="200" /></td>
+						<td style="color: #888">cm</td>
+					</tr>
+					<tr>
+						<td>Weight</td>
+						<td><input type="number" 
+								   name="weight" 
+								   maxlength="10"
+								   ng-model="mainCtrl.ang_mnyrs_spc_det.weight"
+								   required /></td>
+						<td style="color: #888">kg</td>
+					</tr>
+					
+					<tr>
+						<td>Blood Group</td>
+						<!--  Notice bloodGroup.type as bloodGroup.name to map the array index to correct value -->
+						<td><select type="text" 
+									name="bloodGroup"
+									ng-model="mainCtrl.ang_mnyrs_spc_det.blood_group"
+									ng-options="bloodGroup.type as bloodGroup.name for bloodGroup in mainCtrl.ang_blood_type"></select>
+						</td>
+						<td style="color: #888">max length 2</td>
+					</tr>
+					
+					<tr>
+						<td>Date of Birth *</td>
+						<td><input type="date" name="birthDate" required
+							maxlength="10" ng-model="mainCtrl.ang_mnyrs_spc_det.birth_date"
+							required /></td>
+					</tr>
+				</table>
+			</div>
+			<!--  <div id="3" name="service-subscription" class="registration-div">
+				<h3>Mnyrs specific detail</h3>
+				<ul class="glucose">
+					<li>Glucose monitoring preferences
+						<ul>
+							<input type="checkbox" name="serviceType" value="1">Monitoring
+							reminder frequency
+							<br>
+						</ul>
+					</li>
+					<li>Blood pressure monitoring preferences
+						<ul>
+							<input type="checkbox" name="serviceType" value="2">Monitoring
+							reminder frequency
+							<br>
+						</ul>
+					</li>
+					<li>Medication reminding preferences
+						<ul>
+							<input type="checkbox" name="serviceType" value="3">Medicines
+							to be reminded
+							<br>
+						</ul>
+						<ul>
+							<input type="checkbox" name="serviceType" value="4">Medicine
+							reminder frequency
+							<br>
+						</ul>
+					</li>
+					<li>Health goal tracking preferences
+						<ul>
+							<input type="checkbox" name="serviceType" value="5">Health
+							Goal Tracking
+							<br>
+						</ul>
+					</li>
+				</ul>
+			</div>   -->
+			<div id="4" name="medication-reminder-service"
+				class="registration-div">
+				<h3>Medication Reminder</h3>
+				<div>
+					<div ng-repeat="med in mainCtrl.ang_med_rem_serv" class="item">
+						<table>
+							<tr>
+								<td><span> Medicine Name :</span></td>
+								<td><input type="text" ng-model="med.medicine_desc"
+									name="medName"></td>
+							</tr>
+							<tr>
+								<td><span> Reminding Time :</span></td>
+								<td><select id="remindertimeselect"
+									ng-model="med.reminding_time" name="reminderTime">
+								</select></td>
+							</tr>
+						</table>
+						</br>
+
+						<!-- 	<div >
+							<table>
+								<tr>
+									<td><span> Medicine Name :</span></td>
+									  <td><input type="text"  name="medName" ng-model="mainCtrl.ang_med_rem_serv[0].medicine_desc" required></td>
+								</tr>
+								<tr>
+									<td><span> Reminding Time :</span></td>
+									 <td><select id="remindertimeselect" name="reminderTime"  > </select></td> 
+								</tr>
+							</table></br>
+							
+							<table>
+								<tr>
+									<td><span> Medicine Name :</span></td>
+									  <td><input type="text"  name="medName" ng-model="mainCtrl.ang_med_rem_serv[1].medicine_desc" required ></td>
+								</tr>
+								<tr>
+									<td><span> Reminding Time :</span></td>
+									 <td><select  id="remindertimeselect" name="reminderTime"  > </select></td> 
+								</tr>
+							</table></br>
+							
+							<table>
+								<tr>
+									<td><span> Medicine Name :</span></td>
+									  <td><input type="text"  name="medName" ng-model="mainCtrl.ang_med_rem_serv[2].medicine_desc" required ></td>
+								</tr>
+								<tr>
+									<td><span> Reminding Time :</span></td>
+									 <td><select  id="remindertimeselect" name="reminderTime"  > </select></td> 
+								</tr>
+							</table></br> -->
+					</div>
+				</div>
+			</div>
+			<div id="5" name="reading-profile" class="registration-div">
+				<h3>Reading Profile</h3>
+				<h4>Reading Days *</h4>
+				<table ng-repeat="day in mainCtrl.days">
+					<tr>
+						<!-- ng-checked="day ==day in mainCtrl.days" -->
+						<td><input type="checkbox" 
+								   name="readingDay"
+								   ng-value="day"
+								   ng-checked="mainCtrl.dayExist(day)"
+								   >{{day}}</input></td>
+					</tr>
+				</table>
+
+				<h4>Reading Type *</h4>
+				<table ng-repeat="reading_type in mainCtrl.ang_reading_type_serv">
+					<tr>
+						<td><input class="re" 
+								   type="radio"
+								   name="readingType"
+								   ng-value = "reading_type.type"
+								   ng-model="mainCtrl.ang_reading_type[0].reading_type"
+								   required>{{reading_type.value}}</input>
+						</td>
+					</tr>
+				</table>
+
+			</div>
+		</div>
+		<p>
+		<div id="pageNavPosition"></div>
+		</p>
+		<div id="registration-submit-div">
+			<input id="registration-submit" type="submit"
+				class="registration-submit" disabled="disabled" />&nbsp;<input
+				type="reset" />
+		</div>
+	</form>
+
+	<!-- ------------------------------------ JavaScript Section-------------------------------------------- -->
+		<!-- --------------------------------------------------------------------------------------------------- -->
+
+		<!-- Date Picker -->
+	<script>
+		$(document).ready(function() {
+			$("#datepicker").datepicker({
+				dateFormat : "dd-mm-yy",
+				changeMonth : true,
+				changeYear : true,
+				yearRange : "1900:+nn",
+				maxDate : 0
+			});
+			$("#datepicker").datepicker("setDate", new Date);
+		});
+	</script>
+
+	<!-- Show One Div Section -->
+	<script type="text/javascript">
+		var pager = new Pager('form_elements');
+		pager.init();
+		pager.showPageNav('pager', 'pageNavPosition');
+		pager.showPage(1);
+	</script>
+	<script type="text/javascript" src="registration-script.js"></script>
+
+	<!-- Time Selector -->
+	<script type="text/javascript">
+		var selection = "";
+		var i = 0;
+		for (var i = 0; i < 23; i++) {
+			var j = zeroFill(i, 2);
+			selection += "<option value='"+ j +"00'>" + j + ":00" + "</option>";
+			selection += "<option value='"+ j +"30'>" + j + ":30" + "</option>";
+		}
+		$("#remindertimeselect").html(selection);
+		function zeroFill(number, width) {
+			width -= number.toString().length;
+			if (width > 0) {
+				return new Array(width + (/\./.test(number) ? 2 : 1)).join('0')
+						+ number;
+			}
+			return number + ""; // always return a string
+		}
+	</script>
+
+	<!-- Uncheck Radio Button -->
+	<script type="text/javascript">
+		var allRadios = document.getElementsByClassName('re');
+		var booRadio;
+		var x = 0;
+		for (x = 0; x < allRadios.length; x++) {
+
+			allRadios[x].onclick = function() {
+				if (booRadio == this) {
+					this.checked = false;
+					booRadio = null;
+				} else {
+					booRadio = this;
+				}
+			};
+		}
+	</script>
+	
+	<!-- Text input blur -->
+	<script type="text/javascript">
+		function inputFocus(i) {
+			if (i.value == i.defaultValue) {
+				i.value = "";
+				i.style.color = "#000";
+			}
+		}
+		function inputBlur(i) {
+			if (i.value == "") {
+				i.value = i.defaultValue;
+				i.style.color = "#888";
+			}
+		}
+	</script>
+
+</body>
+</html>

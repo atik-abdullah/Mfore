@@ -1,0 +1,117 @@
+mysql -u root -p
+CREATE DATABASE `mnyrs`;
+DROP DATABASE `mnyrs`;
+CREATE USER 'mnyrsuser'@'localhost' IDENTIFIED BY 'mnyrspassword';
+GRANT ALL ON mnyrs.* TO 'mnyrsuser'@'localhost';
+USE `mnyrs`;
+
+CREATE TABLE IF NOT EXISTS `person-detail` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(10) unsigned NOT NULL, 
+    `firstName` VARCHAR(255) NOT NULL,
+    `lastName` VARCHAR(255) NOT NULL,
+    `phone` VARCHAR(30) NOT NULL,
+    `birthDate` DATE NOT NULL,
+    `gender` VARCHAR(10) NOT NULL,
+    `height` INT(255) UNSIGNED NOT NULL,
+    `weight` INT(255) UNSIGNED NOT NULL,
+    `bloodGroup` VARCHAR(2),
+    `streetAddress` VARCHAR(120) NOT NULL,      	 	
+    `postalCode` VARCHAR(120) NOT NULL,
+    `city` VARCHAR(15) NOT NULL,
+    `country` VARCHAR(15) NOT NULL,
+    `socialIDtype` VARCHAR(35) NOT NULL,
+    `IDnumber` VARCHAR(35) NOT NULL,
+    
+    PRIMARY KEY (`id`),
+    
+    FOREIGN KEY userID(`user_id`)
+    REFERENCES mforeUser(`id`)
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8 
+    AUTO_INCREMENT=1 ;
+
+SHOW TABLES FROM mnyrs;
+
+DROP TABLE `person-detail`;
+
+INSERT INTO `person-detail` (`firstName`, `lastName`, `phone`, `birthDate`, `gender`, `height`, `weight`, `bloodGroup` , `streetAddress`, `postalCode`, `city`, `country`, `socialIDtype`, `IDnumber`) VALUES
+('Matthew' , 'Ryan' , '+358123456789' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland' ,'kela' , '53454'),
+('Mitchel' , 'Langerak' , '+358123123123' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland' ,'kela' , '53454'),
+('Abdullah' , 'Atik' , '+358123123123' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland' ,'kela' , '53454'),
+('Alex' , 'Wilkinson' , '+358123123123' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland','kela' , '53454'),
+('Jason' , 'Davidson' , '+358123123123' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland' ,'kela' , '53454'),
+('Traint' , 'Sainsbury' , '+358123123123' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland' ,'kela' , '53454'),
+('Brad' , 'Smith' , '+358123123123' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland' ,'kela' , '53454'),
+('Chris' , 'Herd' , '+358123123123' , '2007-07-07' , 'male' , '187', '250', 'A', '10-A','00440' , 'Helsinki' , 'Finland' ,'kela' , '53454');
+
+SELECT * FROM `person-detail` ;
+
+CREATE TABLE IF NOT EXISTS `service` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `description` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8 
+    AUTO_INCREMENT=1 ;
+
+INSERT INTO `service` (`description`) VALUES
+('Glucose Monitoring Reminding Frequency'),
+('Blood Pressure Monitoring Reminding Frequency'),
+('Medicine to be Reminding'),
+('Medicine Reminding Frequence'),
+('Health Goal Tracking');
+
+CREATE TABLE IF NOT EXISTS `enrollment` (
+    `enrollmentDate` DATE NOT NULL,
+     `person_id` int(11) NOT NULL,
+     `service_id` int(11) NOT NULL,
+
+     FOREIGN KEY patientID(`person_id`)
+     REFERENCES `person-detail`(id),
+
+     FOREIGN KEY serviceID(`service_id`)
+     REFERENCES service(id)
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8,
+    AUTO_INCREMENT=1 ;
+
+
+INSERT INTO `enrollment` (`enrollmentDate` ,  `person_id`, `service_id`) VALUES
+('2007-07-07', '1' , '1'),
+('2007-07-07', '1' , '2'),
+('2007-07-07', '2' , '3'),
+('2007-07-07', '3' , '1'),
+('2007-07-07', '3' , '4');
+
+INSERT INTO `enrollment` (`enrollmentDate` ,  `person_id`, `service_id`) VALUES
+('2007-07-07', '4' , '4');
+DROP TABLE `enrollment`;
+
+
+
+SELECT p.firstName, s.description 
+FROM `person-detail` AS p INNER JOIN enrollment AS e INNER JOIN service AS s 
+on p.id=e.person_id AND s.id=e.service_id AND p.id=1;
+
+
+UPDATE enrollment SET service_id=3 WHERE person_id=3;
+
+
+CREATE TABLE IF NOT EXISTS `mforeUser` (
+  `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) NOT NULL,
+  `pass` varchar(40) NOT NULL,
+  `registeredOn` datetime NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+INSERT INTO `mforeUser` (`email`, `pass`, `registeredOn`) VALUES
+('abc@yahoo.com', '1234' , '2022-06-06 23:59:59'),
+('def@yahoo.com', '1234' , '2023-06-06 23:59:59'),
+('ghi@yahoo.com', '1234' , '2024-06-06 23:59:59'),
+('jkl@yahoo.com', '1234' , '2025-06-06 23:59:59');

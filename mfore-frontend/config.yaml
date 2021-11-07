@@ -1,0 +1,32 @@
+message: This is a message defined in the configuration file config.yaml.
+messageRepetitions: 3
+
+# HTTP-specific options.
+#http:
+  # The port on which the HTTP server listens for service requests.
+  # Because Java cannot drop privileges in a POSIX system, these
+  # ports cannot be in the range 1-1024. A port value of 0 will
+  # make the OS use an arbitrary unused port.
+  # port: 9999
+
+# Database settings.
+database:
+
+  # the name of your JDBC driver
+  driverClass: com.mysql.jdbc.Driver
+
+  # the username
+  user: mnyrsuser
+
+  # the password
+  password: mnyrspassword
+
+  # the JDBC URL
+  url: jdbc:mysql://localhost/mfore_schema
+
+server:
+  type: simple
+  applicationContextPath: /mfore/
+  connector:
+    type: http
+    port: 9999

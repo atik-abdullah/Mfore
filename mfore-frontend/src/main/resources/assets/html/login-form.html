@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Login </title>
+<script type="text/javascript">
+	function validate(){
+		if(document.loginform.userid.value==""){
+			//this should be improved with better regular expression	  
+			alert("Username should not be blank");
+			//document.getElementById("error").appendChild("Username should not be blank");						
+			document.loginform.userid.focus();
+			return false;
+		}else if(document.loginform.password.value==""){
+			//this should be improved with better regular expression	  
+			alert("Password should not be blank");
+			document.loginform.password.focus();
+			return false;
+		} else if(document.loginform.userid.value!=="test"){
+		//This is for demonstration purposes. In real system, this condition shouldn't exist
+			alert("Not a test user");
+			document.loginform.userid.focus();
+			return false;
+		}		
+	}	
+</script>
+</head>
+<body>
+	<div id="error" style="color:red"></div>
+	<h3> Login Page </h3>
+<form action="/mfore/auth/login" name="loginform" onsubmit="return validate();" method="GET">
+		<table cellpadding="3pt">
+	<tr> <td> User Id </td> <td><input type="text" name="user_name" /></td></tr>
+	<tr> <td> Password  </td> <td><input type="password" name="password" /></td></tr>
+	<tr></tr>
+	<tr> <td> <input type="submit" value="login" name="Submit" /></td></tr>
+		</table>
+</form>
+<p>
+<b>Not registered yet? <a href="/mfore/html/mnyrs-signup-page.html">Register here</a></b>
+</body>
+</html>

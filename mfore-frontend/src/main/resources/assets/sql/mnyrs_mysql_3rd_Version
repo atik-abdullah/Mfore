@@ -1,0 +1,226 @@
+------------------------------------------------------------------------------
+Rules
+------------------------------------------------------------------------------
+1. Database table name, field name everything is small letter
+2. If the name consists of multiple words separete them with underscore
+3. No camel casing
+4. Name of primaary key of each table is in the format of : table_name_id
+5. names should always be in singular person
+------------------------------------------------------------------------------
+Common database manipulation commands
+------------------------------------------------------------------------------
+mysql -u root -p
+DROP DATABASE `mfore_schema`;
+CREATE DATABASE `mfore_schema`;
+USE `mfore_schema`;
+
+CREATE USER 'mnyrsuser'@'localhost' IDENTIFIED BY 'mnyrspassword';
+GRANT ALL ON mfore_schema.* TO 'mnyrsuser'@'localhost';
+SHOW ENGINE INNODB STATUS\G
+SHOW TABLES FROM mfore_schema;
+
+DROP TABLE `person`;
+SELECT * FROM `person` ;
+SELECT p.firstName, s.description 
+FROM `person-detail` AS p INNER JOIN enrollment AS e INNER JOIN service AS s 
+on p.id=e.person_id AND s.id=e.service_id AND p.id=1;
+
+UPDATE enrollment SET service_id=3 WHERE person_id=3;
+DROP TABLE `user`;
+SHOW INDEX FROM mforeUser\G
+------------------------------------------------------------------------------
+Database Table "user" Creation
+------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user` (
+  `user_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_name` VARCHAR(50) NOT NULL,
+  `pass` VARCHAR(40) NOT NULL,
+  `registered_on` DATETIME NOT NULL,
+  
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_name` (`user_name`) 
+) 
+ENGINE=InnoDB  
+DEFAULT CHARSET=utf8
+AUTO_INCREMENT=1 ;
+
+INSERT INTO `user` (`user_name`, `pass`, `registered_on`) VALUES
+('abc', '1234' , '2022-06-06 23:59:59'),
+('def', '1234' , '2023-06-06 23:59:59'),
+('ghi', '1234' , '2024-06-06 23:59:59'),
+('jkl', '1234' , '2025-06-06 23:59:59'),
+('mno', '1234' , '2025-06-06 23:59:59'),
+('pqr', '1234' , '2025-06-06 23:59:59'),
+('stu', '1234' , '2025-06-06 23:59:59'),
+('vwx', '1234' , '2025-06-06 23:59:59');
+
+------------------------------------------------------------------------------
+Database Table "identification_type" Creation
+------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `identification_type` (
+    `identification_type_id` int(11) NOT NULL AUTO_INCREMENT,
+    `identification_type_name` VARCHAR(255) NOT NULL,
+    
+    PRIMARY KEY (`identification_type_id`)
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8 
+    AUTO_INCREMENT=1 ;
+    
+    
+INSERT INTO `identification_type` (`identification_type_name`) VALUES
+('National Identificaion'),
+('Kela'),
+('Driving License'),
+('Birth Certificate');
+
+------------------------------------------------------------------------------
+Database Table "person_contact_detail" Creation
+------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `person_contact_detail` (
+    `person_contact_detail_id` INT(10) NOT NULL AUTO_INCREMENT,
+
+    `email` VARCHAR(255) NOT NULL,
+    `phone` VARCHAR(30) NOT NULL,
+    `streetAddress` VARCHAR(120) NOT NULL,      	 	
+    `postalCode` VARCHAR(120) NOT NULL,
+    `city` VARCHAR(15) NOT NULL,
+    `country` VARCHAR(15) NOT NULL,
+
+    PRIMARY KEY (`person_contact_detail_id`)
+    
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8 
+    AUTO_INCREMENT=1 ;
+    
+INSERT INTO `person_contact_detail` (`email` ,`phone` , `streetAddress`, `postalCode`, `city`, `country`) VALUES
+('qwer@yahoo.com' , '+358123456789' , '10-A','00440' , 'Helsinki' , 'Finland'),
+('reqq@yahoo.com' , '+358123123123' , '10-A','00440' , 'Helsinki' , 'Finland'),
+('uyrr@yahoo.com' , '+358123123123' , '10-A','00440' , 'Helsinki' , 'Finland' ),
+('zxcv@yahoo.com' , '+358123123123' , '10-A','00440' , 'Helsinki' , 'Finland');
+
+------------------------------------------------------------------------------
+Database Table "health_specific_detail" Creation
+------------------------------------------------------------------------------    
+
+CREATE TABLE IF NOT EXISTS `health_specific_detail` (
+    `health_specific_detail_id` INT(11) NOT NULL AUTO_INCREMENT,
+    `birth_date` DATE NOT NULL,
+    `gender` VARCHAR(10) NOT NULL,
+    `height` INT(255) UNSIGNED NOT NULL,
+    `weight` INT(255) UNSIGNED NOT NULL,
+    `bloodGroup` VARCHAR(2),
+
+    PRIMARY KEY (`health_specific_detail_id`)
+    
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8 
+    AUTO_INCREMENT=1 ;
+
+
+
+INSERT INTO `health_specific_detail` ( `birth_date`, `gender`, `height`, `weight`, `bloodGroup`) VALUES
+('2007-07-07' , 'male' , '187', '250', 'A'),
+('2007-08-08' , 'female' , '187', '250', 'A'),
+('2007-08-08' , 'male' , '187', '250', 'A'),
+('2007-07-07' , 'unspci' , '187', '250', 'A');
+
+ ------------------------------------------------------------------------------
+Database Table Creation
+------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `person` (
+    `person_id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(10) unsigned NOT NULL, 
+    `identification_type_id` INT(10) , 
+    `person_contact_detail_id` INT(10),
+    `health_specific_detail_id` INT(11),
+
+    `first_name` VARCHAR(255) NOT NULL,
+    `last_name` VARCHAR(255) NOT NULL,
+    `identification_number` VARCHAR(255),
+    
+    PRIMARY KEY (`person_id`),
+	
+    FOREIGN KEY userID(`user_id`)
+    REFERENCES user(`user_id`),
+    
+    FOREIGN KEY identificationTypeID(`identification_type_id`)
+    REFERENCES identification_type(`identification_type_id`),
+
+    FOREIGN KEY personContactDetailID(`person_contact_detail_id`)
+    REFERENCES person_contact_detail(`person_contact_detail_id`),
+    
+    FOREIGN KEY healthSpecificDetailID(`health_specific_detail_id`)
+    REFERENCES health_specific_detail(`health_specific_detail_id`)    
+        ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8 
+    AUTO_INCREMENT=1 ;
+    
+INSERT INTO `person` (`user_id`, `identification_type_id`, `person_contact_detail_id`, `health_specific_detail_id`, `first_name`, `last_name` , `identification_number` ) VALUES
+('1', '1', '1' , '1' , 'Matthew' , 'Ryan' , '53454'),
+('2', '2', '2' , '2' , 'Adam' , 'Fedrici' , '53454'),
+('3', '1', '3' , '3' , 'Mitchell' , 'Langerak' , '53454'),
+('4', '2', '4' , '4' ,'Jason' , 'Davidson' , '53454');
+
+
+INSERT INTO `person` (`user_id`, `identification_type_id`, `person_contact_detail_id`, `health_specific_detail_id`, `first_name`, `last_name` , `identification_number` ) VALUES
+('1', '1', '' , '' , 'new' , 'person' , '53454');
+
+------------------------------------------------------------------------------
+Database Table "service" Creation
+------------------------------------------------------------------------------  
+CREATE TABLE IF NOT EXISTS `service` (
+    `service_id` int(11) NOT NULL AUTO_INCREMENT,
+    `description` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`service_id`)
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8 
+    AUTO_INCREMENT=1 ;
+    
+INSERT INTO `service` (`description`) VALUES
+('Glucose Monitoring Reminding Frequency'),
+('Blood Pressure Monitoring Reminding Frequency'),
+('Medicine to be Reminding'),
+('Medicine Reminding Frequence'),
+('Health Goal Tracking');
+
+
+------------------------------------------------------------------------------
+Database Table Creation
+------------------------------------------------------------------------------   
+CREATE TABLE IF NOT EXISTS `enrollment` (
+    `enrollment_date` DATE NOT NULL,
+     `person_id` int(11) NOT NULL,
+     `service_id` int(11) NOT NULL,
+
+     FOREIGN KEY personID(`person_id`)
+     REFERENCES `person`(person_id),
+
+     FOREIGN KEY serviceID(`service_id`)
+     REFERENCES service(service_id)
+    ) 
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8,
+    AUTO_INCREMENT=1 ;
+    
+INSERT INTO `enrollment` (`enrollment_date` ,  `person_id`, `service_id`) VALUES
+('2007-07-07', '1' , '1'),
+('2007-07-07', '1' , '2'),
+('2007-07-07', '2' , '3'),
+('2007-07-07', '3' , '1'),
+('2007-07-07', '3' , '4');
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,316 @@
+<html  ng-app="mnyrsApp">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js"></script>
+	<link rel="stylesheet" href="/mfore/css/multipage.css">
+	<!-- jQuery -->
+	<script type="text/javascript" src="/mfore/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/mfore/js/jquery.easing.1.3.js"></script>
+	<script type="text/javascript" src="/mfore/js/multipage-angular-script.js"></script>
+</head>
+
+<body ng-controller="MainCtrl as mainCtrl">
+<div id="page">
+		<!-- progressbar -->
+		<ul id="progressbar">
+			<li class="active">Contact Detail</li>
+			<li>Health Attribute</li>
+			<li>Medication Reminder</li>
+			<li>Reading Profile</li>		
+		</ul>
+</div>
+<!-- <span style="text-align: right; color:white">Hello {{mainCtrl.ang_person.first_name}}{{mainCtrl.ang_person.last_name}}</span>  -->
+<a href="/mfore/auth/logout"> <li style="text-align: right; color:white">Logout</li></a>
+<!-- multistep form -->
+<form id="msform" 
+	  name="myForm" 
+	  action="/mfore/registration/updatePerson/" 
+	  method="get"
+	  enctype="application/x-www-form-urlencoded">
+	  
+	<!-- fieldsets -->
+	<fieldset id="msfs1" >
+		<h2 class="fs-title">Person Contact Detail</h2>
+		<h3 class="fs-subtitle">This is step 1</h3>
+		<table>
+			<tr>
+				<td> 
+					 <label>First Name*</label>
+					 <input type="text" 
+					 		name="firstName"
+					 		placeholder="Timo"
+					 		ng-model="mainCtrl.ang_person.first_name">
+				</td>
+				<td> 
+					 <label>Last Name*</label>
+					 <input type="text" 
+					 		name="lastName" 
+					 		placeholder="Leinone"
+					 		ng-model="mainCtrl.ang_person.last_name">
+				</td>
+			</tr>
+		</table>
+		<label>Street Address*</label>
+		<input type="text" 
+				name="streetAddress" 
+				required
+				ng-model="mainCtrl.ang_per_con_det.street_address"
+				placeholder="e.g. Vaakatie 10 A" />
+		<label>Postal Code*</label>
+		<input type="text"
+		 	   name="postalCode" 
+		 	   required
+			   ng-model="mainCtrl.ang_per_con_det.postal_code"
+			   placeholder="e.g. 00550" /> 
+		<label >City *</label>
+		<input type="text" 
+			   name="city"
+			   required
+			   placeholder="e.g. Helsinki" 
+			   ng-model="mainCtrl.ang_per_con_det.city"/>
+		<label>Country *</label>
+		<!--  Notice country.id as country.name to map the array index to correct value -->		
+		<select name="country"
+				required
+				ng-model="mainCtrl.ang_per_con_det.country"
+				ng-options="country.id as country.name for country in mainCtrl.ang_countries"></select>
+		<label class="fs-label">Phone*</label>
+		<span ng-show="myForm.phone.$error.pattern">Only contain digit and must begin with (+)</span>			   	
+		<input id="pn1"
+			   type="text" 
+			   name="phone"
+			   placeholder="+358-461744244"
+			   ng-model="mainCtrl.ang_per_con_det.phone"
+			   ng-pattern="/^[/+][0-9]*$/"
+			   /> <!-- Phone number must begin with a + and only contain digits, the end anchor
+			   forbid any other characters in between -->
+			   
+		<label>Social ID Type*</label> 
+		<select name="socialIDtype" 
+				required
+				ng-model="mainCtrl.ang_person.fk_identification_type_id"
+				ng-options="sid.type as sid.name for sid in mainCtrl.ang_social_id_type"></select>
+		<label>ID Number*</label>
+		<input type="text" 
+			   name="idNumber"
+			   required
+			   ng-model="mainCtrl.ang_person.identification_number" />				
+		<input id="next1"
+			   type="button" 
+			   name="next"
+			   class="next action-button" 
+			   value="Next" 
+			   	/>
+	</fieldset>
+	<fieldset id="msfs2">
+		<h2 class="fs-title">Health attribute</h2>
+		<h3 class="fs-subtitle">This is step 2</h3>
+		<label>Gender</label>
+		<select name="gender" required>
+					<option value="male">Male</option>
+					<option value="female">Female</option>
+					</select>
+		<label>Height (cm)</label>	
+		<span ng-show="myForm.height.$error.min">Can not enter negative value</span>				
+		<input type="number" 
+			   name="height"
+			   min ="0"
+			   placeholder="e.g. 168"
+			   required
+			   ng-model="mainCtrl.ang_mnyrs_spc_det.height" 
+			   ng-min="50"
+			   ng-max="200" />
+		<label>Weight (kg)</label>
+		<span ng-show="myForm.weight.$error.min">Can not enter negative value</span>
+		<input type="number" 
+			   name="weight" 
+			   min="0"
+			   placeholder="e.g. 72"
+			   ng-model="mainCtrl.ang_mnyrs_spc_det.weight"
+			   required />
+		<label>Blood Group</label>
+		<!--  Notice bloodGroup.type as bloodGroup.name to map the array index to correct value -->
+		<select type="text" 
+				name="bloodGroup"
+				ng-model="mainCtrl.ang_mnyrs_spc_det.blood_group"
+				ng-options="bloodGroup.type as bloodGroup.name for bloodGroup in mainCtrl.ang_blood_type">
+		</select>
+		<label>Date of Birth *</label>
+		<input type="date" 
+			   name="birthDate"
+			   required
+			   maxlength="10"
+			   ng-model="mainCtrl.ang_mnyrs_spc_det.birth_date"
+			   required />
+		<input type="button" name="previous" class="previous action-button" value="Previous" />
+		<input type="button" name="next" class="next action-button" value="Next" />
+	</fieldset>
+	<fieldset id="msfs3">
+		<h2 class="fs-title">Medication Reminder Service</h2>
+		<h3 class="fs-subtitle">This is step 3</h3>
+		<table ng-repeat="med in mainCtrl.ang_med_rem_serv" class="item">
+			<tr>
+				<td>
+				<label> Medicine Name :</label>
+				<input type="text" 
+						   ng-model="med.medicine_desc"
+						   name="medName">
+				</td>
+				<td>
+				<label> Reminding Time :</label>
+				<select id="remindertimeselect"
+						ng-model="med.reminding_time" name="reminderTime">
+				</select>
+				</td>
+			</table>
+		<input type="button" name="previous" class="previous action-button" value="Previous" />
+		<input type="button" name="next" class="next action-button" value="Next" />
+	</fieldset>
+	<fieldset id="msfs4">
+		<h2 class="fs-title">Reading Profile</h2>
+		<h3 class="fs-subtitle">Final step</h3>
+		<label class="fs4-label">Reading Days </label>
+		<table ng-repeat="day in mainCtrl.days">
+				<tr >
+					<!-- ng-checked="day ==day in mainCtrl.days" -->
+					<td ><input 
+						   type="checkbox" 
+					       name="readingDay"
+					       ng-value="day"
+					       check-list = 'checked_days'
+					       ng-checked="mainCtrl.dayExist(day)" >
+					</td>
+ 					<td><label >{{day}}</label></td>
+ 				</tr>
+		</table>
+		<label class="fs4-label">Reading Type </label>
+		<table ng-repeat="reading_type in mainCtrl.ang_reading_type_serv">
+			<tr>
+				<td><input type="radio"
+						   name="readingType"
+						   ng-value = "reading_type.type"
+						   ng-model="mainCtrl.ang_reading_type[0].reading_type"
+						   /> 
+					<label class="fs4-label" id="fs4-read-label">{{reading_type.value}}</label>
+				</td>
+			</tr>
+			</table>		
+		<input type="button" name="previous" class="previous action-button" value="Previous" />
+		<input type="submit" name="submit" class="submit action-button" value="Submit" />
+	</fieldset>
+</form>
+
+<script type="text/javascript">
+
+				//jQuery time
+				var current_fs, next_fs, previous_fs; //fieldsets
+				var left, opacity, scale; //fieldset properties which we will animate
+				var animating; //flag to prevent quick multi-click 
+				$(".next").click(
+						function() {
+							current_fs = $(this).parent();
+							next_fs = $(this).parent().next();
+
+							//activate next step on progressbar using the index of next_fs
+							$("#progressbar li").eq(
+									$("fieldset").index(next_fs)).addClass(
+									"active");
+
+							//show the next fieldset
+							next_fs.show();
+							//hide the current fieldset with style
+							current_fs.animate({
+								opacity : 0
+							}, {
+								step : function(now, mx) {
+									//as the opacity of current_fs reduces to 0 - stored in "now"
+									//1. scale current_fs down to 80%
+									scale = 1 - (1 - now) * 0.2;
+									//2. bring next_fs from the right(50%)
+									left = (now * 50) + "%";
+									//3. increase opacity of next_fs to 1 as it moves in
+									opacity = 1 - now;
+									current_fs.css({
+										'transform' : 'scale(' + scale + ')'
+									});
+									next_fs.css({
+										'left' : left,
+										'opacity' : opacity
+									});
+								},
+								duration : 800,
+								complete : function() {
+									current_fs.hide();
+								},
+								//this comes from the custom easing plugin
+								easing : 'easeInOutBack'
+							});
+						});
+
+				$(".previous").click(
+						function() {
+							current_fs = $(this).parent();
+							previous_fs = $(this).parent().prev();
+
+							//de-activate current step on progressbar
+							$("#progressbar li").eq(
+									$("fieldset").index(current_fs))
+									.removeClass("active");
+
+							//show the previous fieldset
+							previous_fs.show();
+							//hide the current fieldset with style
+							current_fs.animate({
+								opacity : 0
+							}, {
+								step : function(now, mx) {
+									//as the opacity of current_fs reduces to 0 - stored in "now"
+									//1. scale previous_fs from 80% to 100%
+									scale = 0.8 + (1 - now) * 0.2;
+									//2. take current_fs to the right(50%) - from 0%
+									left = ((1 - now) * 50) + "%";
+									//3. increase opacity of previous_fs to 1 as it moves in
+									opacity = 1 - now;
+									current_fs.css({
+										'left' : left
+									});
+									previous_fs.css({
+										'transform' : 'scale(' + scale + ')',
+										'opacity' : opacity
+									});
+								},
+								duration : 800,
+								complete : function() {
+									current_fs.hide();
+								},
+								//this comes from the custom easing plugin
+								easing : 'easeInOutBack'
+							});
+						});
+
+				$(".submit").click(function() {
+					return true;
+				});
+
+</script>
+
+<!-- Time Selector -->
+<script type="text/javascript">
+		var selection = "";
+		var i = 0;
+		for (var i = 0; i < 23; i++) {
+			var j = zeroFill(i, 2);
+			selection += "<option value='"+ j +"00'>" + j + ":00" + "</option>";
+			selection += "<option value='"+ j +"30'>" + j + ":30" + "</option>";
+		}
+		$("#remindertimeselect").html(selection);
+		function zeroFill(number, width) {
+			width -= number.toString().length;
+			if (width > 0) {
+				return new Array(width + (/\./.test(number) ? 2 : 1)).join('0')
+						+ number;
+			}
+			return number + ""; // always return a string
+		}
+	</script>
+</body>
+</html>

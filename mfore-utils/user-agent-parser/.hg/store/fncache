@@ -1,0 +1,8 @@
+data/src/test/resources/browser_list.txt.i
+data/.hgignore.i
+data/.eprj.i
+data/pom.xml.i
+data/src/main/java/com/google/code/useragent/UserAgentParser.java.i
+data/src/main/java/com/google/code/useragent/UserAgentParseException.java.i
+data/src/test/java/com/google/code/useragent/UserAgentParserTest.java.i
+data/src/main/java/com/google/code/useragent/UserAgentDetails.java.i

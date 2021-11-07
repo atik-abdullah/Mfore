@@ -1,0 +1,151 @@
+<html ng-app="mnyrsAppp">
+<head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js"></script>
+<link rel="stylesheet" href="/mfore/css/multipage.css">
+<!-- jQuery -->
+<script src="jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="jquery.easing.1.3.js"></script>
+<script src="/mfore/js/jquery-1.9.1.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+</head>
+
+<body ng-controller="MainCtrl as ctrl">
+	<form id="msform" 
+		  name="myForm" 
+		  autocomplete="false" 
+		  method="GET"
+		  name="signUpForm" 
+		  action="/mfore/registration/newProfile/" >
+		<fieldset id="msfs1">
+			<h2 class="fs-title">Sign-up Page</h2>
+			<label>First Name</label> 
+			<input type="text" 
+				   name="firstName"
+				   ng-model="ctrl.user.fn"
+				   placeholder="Timo" />
+		 	<label>Last Name</label>
+		 	<input type="text"
+				   name="lastName" 
+				   ng-model="ctrl.user.ln"
+				   placeholder="Leinone"
+				   required /> 
+			<!-- user name range between 8 and 12
+					Condition: only alphanumeric, at least one small letter,
+					at least one capital letter and at least number/digit   -->
+			<label>User Name</label>
+			<span id="p1"></span>
+			<span ng-show="myForm.userName.$error.pattern ">Range 8-12,  Must contain at least one small, one capital and one number</span>
+			
+			<input type="text"
+				   name="userName"
+				   id="username" 
+				   ng-model="ctrl.user.username" 
+				   placeholder="user1234@"
+				   class="credential"
+				   ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])[0-9a-zA-Z]{8,12}$/"
+				   onChange="checkUser()" 
+				   required/> 
+			<!-- Password should have min length 6 and max length 12 and contain 
+					at least one of these @_-& special characters , Notice hiphen(-)
+					is a special character in regex, so it must be placed in front of ranges or
+					at the last. If you put it in between then it has to be escaped with a backslash
+					-->
+			
+			<label>Password</label> 
+			<span ng-show="myForm.password.$error.pattern ">Range 6-12, At least one of these special characters @_-&</span>
+			<input type="password"
+				   name="password"  
+				   ng-model="ctrl.user.password"
+				   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+				   ng-pattern="/^(?=.*[-@_&])[-0-9a-zA-Z@_&]{6,12}$/"
+				   required/>
+			
+			<label>Confirm Password</label> 
+			<span ng-show="myForm.confirm_password.$error.passwordVerify">Password Doesn't match</span>
+			<input type="password"
+				   name="confirm_password" 
+				   ng-model='ctrl.user.password_verify'
+				   data-password-verify="ctrl.user.password"
+				   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;" 
+				   required/>
+				     
+			<!-- Phone number must begin with a + and only contain digits, the end anchor
+			   forbid any other characters in between -->
+			<label>Phone Number</label> 
+			<span ng-show="myForm.phoneNumber.$error.pattern">Only contain digit and must begin with (+)</span> 
+			<input type="text" 
+				   name="phoneNumber"
+				   placeholder="+358-461744244" 
+				   ng-model="ctrl.user.phone"
+				   ng-pattern="/^[/+][0-9]*$/" 
+				   required/>
+			<!-- Phone number must begin with a + and only contain digits, the end anchor
+			   forbid any other characters in between -->
+			   
+			<input type="submit" 
+				  value="Register" 
+				  id="greenBtn"
+				  ng-disabled="myForm.$invalid" />
+		</fieldset>
+	</form>
+	<script type="text/javascript">
+		angular.module('mnyrsAppp', []).controller('MainCtrl', [ function() {
+			var self = this;
+			var phone;
+			self.submit = function() {
+				console.log('User clicked submit with ', self.user);
+			};
+		} ]).directive("passwordVerify", function() {
+			   return {
+				      require: "ngModel",
+				      scope: {
+				        passwordVerify: '='
+				      },
+				      link: function(scope, element, attrs, ctrl) {
+				        scope.$watch(function() {
+				            var combined;
+
+				            if (scope.passwordVerify || ctrl.$viewValue) {
+				               combined = scope.passwordVerify + '_' + ctrl.$viewValue; 
+				            }                    
+				            return combined;
+				        }, function(value) {
+				            if (value) {
+				                ctrl.$parsers.unshift(function(viewValue) {
+				                    var origin = scope.passwordVerify;
+				                    if (origin !== viewValue) {
+				                        ctrl.$setValidity("passwordVerify", false);
+				                        return undefined;
+				                    } else {
+				                        ctrl.$setValidity("passwordVerify", true);
+				                        return viewValue;
+				                    }
+				                });
+				            }
+				        });
+				     }
+				   };
+				});
+	</script>
+	<script type="text/javascript">
+		function checkUser() {		
+			var username = 'userName='+ document.getElementById('username').value;
+			$.ajax({
+				  url:"/mfore/registration/usercheck/" ,
+				  data: username,
+				  success: function(data){
+					  	console.log('123'+data);
+					  	document.getElementById('p1').innerText = data;
+				  }
+				});
+		};
+	</script>
+
+	<script type="text/javascript">
+		$(".submit").click(function() {
+			return true;
+		});
+	</script>
+</body>
+</html>
